@@ -52,6 +52,57 @@ Nome = reader.GetString("nome"),
     return usuarios;
 });
 
+app.MapGet("/mensagens", () =>
+{
+    MySqlConnection connection = new("server=localhost;database=folhadepagamento;user=root;password=123@456@789");
+    connection.Open();
+    var cmd = connection.CreateCommand();
+    cmd.CommandText = "SELECT * FROM mensagens";
+    var reader = cmd.ExecuteReader();
+    var mensagens = new List<Mensagem>();
+    //var usuarios = new List<Usuario>();
+    while (reader.Read())
+    {
+        mensagens.Add(new Mensagem
+        {
+            email_usuario = reader.GetString("email_usuario"),
+            enviado_recebido = reader.GetString("enviado_recebido"),
+            mensagem = reader.GetString("mensagem"),
+            data_registro = reader.IsDBNull(4) ? DateTime.Now : reader.GetDateTime("data_registro")
+        });
+        /*usuarios.Add(new Usuario
+        {
+            Id = reader.GetInt32("id"),
+Nome = reader.GetString("nome"),
+            Email = reader.GetString("email")
+        });*/
+    }
+    return mensagens;
+});
+
+app.MapGet("/acoes_usuarios", () =>
+{
+    MySqlConnection connection = new("server=localhost;database=folhadepagamento;user=root;password=123@456@789");
+    connection.Open();
+    var cmd = connection.CreateCommand();
+    cmd.CommandText = "SELECT * FROM acoes_usuarios";
+    var reader = cmd.ExecuteReader();
+    var mensagens = new List<acoes_usuario>();
+    //var usuarios = new List<Usuario>();
+    while (reader.Read())
+    {
+        mensagens.Add(new acoes_usuario
+        {
+            email_usuario = reader.GetString("email_usuario"),
+            acao_usuarios = reader.GetString("acao_usuarios"),
+            enviado_recebido = reader.GetString("enviado_recebido"),
+            data_hora_acao = reader.IsDBNull(3) ? DateTime.Now : reader.GetDateTime("data_hora_acao")
+        });
+
+    }
+    return mensagens;
+});
+
 
 app.Run();
 class Usuario
@@ -64,7 +115,24 @@ class Usuario
 
 }
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+
+class Mensagem
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public string email_usuario { get; set; }
+    public string enviado_recebido { get; set; }
+    public string mensagem { get; set; }
+    public DateTime? data_registro { get; set; }
+
+
+}
+
+class acoes_usuario
+{
+    public string email_usuario { get; set; }
+    public string acao_usuarios { get; set; }
+
+    public string enviado_recebido { get; set; }
+    public DateTime? data_hora_acao { get; set; }
+
+
 }
